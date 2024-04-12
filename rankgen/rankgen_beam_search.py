@@ -40,7 +40,7 @@ if args.num_shards > 1:
     data = partitions[args.local_rank]
     args.output_file = f'{args.output_file}.shard_{args.local_rank}'
 
-rankgen_encoder = RankGenEncoder(model_path=args.retriever_model_path, cache_dir=args.cache_dir)
+rankgen_encoder = RankGenEncoder(model_path=args.rankgen_encoder, cache_dir=args.cache_dir)
 
 random.seed(49)
 random.shuffle(data)
@@ -50,7 +50,7 @@ random.shuffle(data)
 
 folder_name = f"token_bs_t5x"
 
-rankgen_generator = RankGenGenerator(rankgen_encoder=rankgen_encoder, language_model="gpt2-{args.model_size}", cache_dir=args.cache_dir)
+rankgen_generator = RankGenGenerator(rankgen_encoder=rankgen_encoder, language_model=f"gpt2-{args.model_size}", cache_dir=args.cache_dir)
 
 outputs = []
 
