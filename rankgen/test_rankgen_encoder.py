@@ -14,10 +14,10 @@ parser.add_argument('--cache_dir', default=None, type=str)
 args = parser.parse_args()
 
 test_example_file_map = {
-    "kalpeshk2011/rankgen-t5-base-all": "rankgen_data/test_examples/t5_base_all.jsonl",
-    "kalpeshk2011/rankgen-t5-large-all": "rankgen_data/test_examples/t5_large_all.jsonl",
-    "kalpeshk2011/rankgen-t5-xl-all": "rankgen_data/test_examples/t5_xl_all.jsonl",
-    "kalpeshk2011/rankgen-t5-xl-pg19": "rankgen_data/test_examples/t5_xl_pg19.jsonl"
+    "kalpeshk2011/rankgen-t5-base-all": "/content/drive/Shareddrives/COS484-NLPFinalProject/rankgen_data/test_examples/t5_base_all.jsonl",
+    "kalpeshk2011/rankgen-t5-large-all": "/content/drive/Shareddrives/COS484-NLPFinalProject/rankgen_data/test_examples/t5_large_all.jsonl",
+    "kalpeshk2011/rankgen-t5-xl-all": "/content/drive/Shareddrives/COS484-NLPFinalProject/rankgen_data/test_examples/t5_xl_all.jsonl",
+    "kalpeshk2011/rankgen-t5-xl-pg19": "/content/drive/Shareddrives/COS484-NLPFinalProject/rankgen_data/test_examples/t5_xl_pg19.jsonl"
 }
 
 rankgen_encoder = RankGenEncoder(args.model_path)
