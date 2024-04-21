@@ -36,11 +36,13 @@ model.eval()
 
 avg_score = []
 all_score = []
+random.seed(484)
+random.shuffle(data)
 random.seed(43)
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
-output = ""
+output = []
 suffix_lens = []
 gen_lens = []
 
@@ -99,14 +101,18 @@ for idx, dd in tqdm.tqdm(enumerate(data), total=min(len(data), args.num_instance
     suffix_lens.append(len(suffix_str.split()))
     for x in gen_text:
         gen_lens.append(len(x.split()))
-    output += f"{prefix}\t{suffix_str}\tplaceholder\tplaceholder\n"
+    # output += f"{prefix}\t{suffix_str}\tplaceholder\tplaceholder\n"
     for x in gen_text:
-        output += f"{prefix}\t{x}\tplaceholder\tplaceholder\n"
+        # output += f"{prefix}\t{x}\tplaceholder\tplaceholder\n"
+        output.append(json.dumps({
+        "prefix": f"{prefix}",
+        "target": f"{x}"
+    }))
 
     if (idx + 1) % 100 == 0:
         print(f"Avg suffix length = {np.mean(suffix_lens):.4f} ({len(suffix_lens)} samples), avg gen length = {np.mean(gen_lens):.4f} ({len(gen_lens)} samples)")
         with open(args.output_file, "w") as f:
-            f.write(output)
+            f.write("\n".join(output) + "\n")
 
 with open(args.output_file, "w") as f:
-    f.write(output)
+    f.write("\n".join(output) + "\n")
