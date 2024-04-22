@@ -64,8 +64,8 @@ if os.path.exists(args.output_file):
         outputs = f.read().strip().split("\n")
 
 for kk, instance in tqdm.tqdm(enumerate(data), total=len(data)):
-    if kk < len(outputs):
-        continue
+    # if kk < len(outputs):
+    #     continue
     token_beam_text, token_beam_scores = rankgen_generator.beam_search(contexts=[instance["prefix"]],
                                                                        beam_size=args.beam_size,
                                                                        top_p=args.top_p,
