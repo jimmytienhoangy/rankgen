@@ -38,7 +38,7 @@ avg_score = []
 all_score = []
 random.seed(484)
 random.shuffle(data)
-random.seed(43)
+random.seed(None)
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
@@ -58,6 +58,8 @@ def truncate(text):
         last_punc = max(last_punc, text.rindex("?"))
     if "!" in text:
         last_punc = max(last_punc, text.rindex("!"))
+    if last_punc == 0:
+      return text
     if last_punc != 0:
         text = text[:last_punc + 1]
     return text
@@ -71,6 +73,7 @@ for idx, dd in tqdm.tqdm(enumerate(data), total=min(len(data), args.num_instance
     if len(suffix_lens) >= args.num_instances:
         break
     prefix = dd['prefix']
+    ground_truth = dd["targets"][0]
     batch = tokenizer(prefix, truncation=True, padding="longest", return_tensors="pt", max_length=1024 - args.max_new_tokens).to(device)
     num_tokens = len(batch['input_ids'][0])
     if num_tokens >= 1024 - args.max_new_tokens - 3:
@@ -89,9 +92,9 @@ for idx, dd in tqdm.tqdm(enumerate(data), total=min(len(data), args.num_instance
         gen_text = [" ".join(x.split()) for x in gen_text]
         gen_text = [truncate(x) for x in gen_text]
 
-    for i in range(len(gen_text)):
-        if random.random() < args.truncate_fraction:
-            gen_text[i] = truncate(gen_text[i][:-1])
+    # for i in range(len(gen_text)):
+    #     if random.random() < args.truncate_fraction:
+    #         gen_text[i] = truncate(gen_text[i][:-1])
 
     if "suffix" in dd:
         suffix_str = dd['suffix']
@@ -102,12 +105,20 @@ for idx, dd in tqdm.tqdm(enumerate(data), total=min(len(data), args.num_instance
     for x in gen_text:
         gen_lens.append(len(x.split()))
     # output += f"{prefix}\t{suffix_str}\tplaceholder\tplaceholder\n"
+
+    curr_output = {}
+    curr_output["prefix"] = f"{prefix}"
+    curr_output["targets"] = [ground_truth]
+    
     for x in gen_text:
-        # output += f"{prefix}\t{x}\tplaceholder\tplaceholder\n"
-        output.append(json.dumps({
-        "prefix": f"{prefix}",
-        "target": f"{x}"
-    }))
+      curr_output["targets"].append(f"{x}")
+
+    # for x in gen_text:
+    #     # output += f"{prefix}\t{x}\tplaceholder\tplaceholder\n"
+    #     output.append(json.dumps({
+    #     "prefix": f"{prefix}",
+    #     "target": f"{x}"
+    # }))
 
     if (idx + 1) % 100 == 0:
         print(f"Avg suffix length = {np.mean(suffix_lens):.4f} ({len(suffix_lens)} samples), avg gen length = {np.mean(gen_lens):.4f} ({len(gen_lens)} samples)")
