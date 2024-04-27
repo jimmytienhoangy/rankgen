@@ -113,6 +113,8 @@ for idx, dd in tqdm.tqdm(enumerate(data), total=min(len(data), args.num_instance
     for x in gen_text:
       curr_output["targets"].append(f"{x}")
 
+    output.append(json.dumps(curr_output))
+
     # for x in gen_text:
     #     # output += f"{prefix}\t{x}\tplaceholder\tplaceholder\n"
     #     output.append(json.dumps({
